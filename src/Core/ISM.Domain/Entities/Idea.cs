@@ -10,6 +10,8 @@ public class Idea : Entity, IAggregateRoot
     private Idea() { } // for EF
 
     public Guid InnovationEventId { get; private set; }
+    public InnovationEvent InnovationEvent { get; private set; } = null!;
+
     public IdeaCode IdeaCode { get; private set; } = default!;
     public string Title { get; private set; } = default!;
     public string Description { get; private set; } = default!;

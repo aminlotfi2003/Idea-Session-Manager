@@ -8,7 +8,11 @@ public class IdeaEvaluation : Entity
     private IdeaEvaluation() { } // for EF
 
     public Guid IdeaId { get; private set; }
+    public Idea Idea { get; private set; } = null!;
+
     public Guid JudgeId { get; private set; }
+    public Judge Judge { get; private set; } = null!;
+
     public DateTimeOffset EvaluationDate { get; private set; }
     public OverallDecision OverallDecision { get; private set; } = OverallDecision.NotSet;
     public string? Comments { get; private set; }

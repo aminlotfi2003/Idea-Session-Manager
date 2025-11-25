@@ -6,6 +6,8 @@ namespace ISM.Domain.Identity;
 public class UserRefreshToken : Entity
 {
     public Guid UserId { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+
     public string TokenHash { get; set; } = default!;
     public DateTimeOffset ExpiresAt { get; set; }
     public bool Revoked { get; set; }

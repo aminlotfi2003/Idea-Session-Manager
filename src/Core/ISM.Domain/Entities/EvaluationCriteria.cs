@@ -7,12 +7,16 @@ public class EvaluationCriteria : Entity
     private EvaluationCriteria() { } // for EF
 
     public Guid InnovationEventId { get; private set; }
+    public InnovationEvent InnovationEvent { get; private set; } = null!;
+
     public string Title { get; private set; } = default!;
     public string Description { get; private set; } = default!;
     public int MinScore { get; private set; }
     public int MaxScore { get; private set; }
     public double Weight { get; private set; }
     public int Order { get; private set; }
+
+    public ICollection<EvaluationScore> Scores { get; private set; } = new HashSet<EvaluationScore>();
 
     public static EvaluationCriteria Create(
         Guid innovationEventId,

@@ -1,4 +1,5 @@
-﻿using ISM.SharedKernel.Common.Domain;
+﻿using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Domain;
 
 namespace ISM.Domain.Entities;
 
@@ -6,7 +7,9 @@ public class Judge : Entity, IAggregateRoot
 {
     private Judge() { }
 
-    public Guid UserId { get; private set; } // Relation with User
+    public Guid UserId { get; private set; } // Relation with ApplicationUser
+    public ApplicationUser User { get; private set; } = null!;
+
     public string FullName { get; private set; } = default!;
     public string ExpertiseAreas { get; private set; } = default!;
     public bool IsActive { get; private set; }

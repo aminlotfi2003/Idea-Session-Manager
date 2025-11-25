@@ -5,6 +5,8 @@ namespace ISM.Domain.Identity;
 public class UserPasswordHistory : Entity
 {
     public Guid UserId { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+
     public string PasswordHash { get; set; } = default!;
     public DateTimeOffset ChangedAt { get; set; } = DateTimeOffset.UtcNow;
 

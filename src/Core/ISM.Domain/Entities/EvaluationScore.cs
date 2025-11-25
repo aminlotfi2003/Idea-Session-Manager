@@ -7,7 +7,11 @@ public class EvaluationScore : Entity
     private EvaluationScore() { } // for EF
 
     public Guid IdeaEvaluationId { get; private set; }
+    public IdeaEvaluation IdeaEvaluation { get; private set; } = null!;
+
     public Guid EvaluationCriteriaId { get; private set; }
+    public EvaluationCriteria EvaluationCriteria { get; private set; } = null!;
+    
     public int Score { get; private set; }
     public string? Comment { get; private set; }
 

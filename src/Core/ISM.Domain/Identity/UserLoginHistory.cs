@@ -10,6 +10,8 @@ public sealed class UserLoginHistory : Entity, IAuditableEntity
     public Guid? ModifiedBy { get; set; }
 
     public Guid UserId { get; set; }
+    public ApplicationUser User { get; set; } = null!;
+
     public DateTimeOffset OccurredAt { get; set; } = DateTimeOffset.UtcNow;
     public string? IpAddress { get; set; }
     public string? Host { get; set; }
