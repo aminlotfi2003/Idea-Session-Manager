@@ -6,10 +6,6 @@ namespace ISM.Domain.Entities;
 
 public class InnovationEvent : Entity, IAggregateRoot
 {
-    private readonly List<EvaluationCriteria> _evaluationCriteria = new();
-    private readonly List<Idea> _ideas = new();
-    private readonly List<Guid> _judgeIds = new(); // UserIds
-
     private InnovationEvent() { } // for EF
 
     public string Title { get; private set; } = default!;
@@ -21,9 +17,9 @@ public class InnovationEvent : Entity, IAggregateRoot
     public EventStatus Status { get; private set; } = EventStatus.Draft;
     public string? RulesDocumentPath { get; private set; }
 
-    public IReadOnlyCollection<EvaluationCriteria> EvaluationCriteria => _evaluationCriteria.AsReadOnly();
-    public IReadOnlyCollection<Idea> Ideas => _ideas.AsReadOnly();
-    public IReadOnlyCollection<Guid> JudgeIds => _judgeIds.AsReadOnly();
+    public ICollection<EvaluationCriteria> EvaluationCriteria { get; private set; } = new HashSet<EvaluationCriteria>();
+    public ICollection<Idea> Ideas { get; private set; } = new HashSet<Idea>();
+    public ICollection<Guid> JudgeIds { get; private set; } = new HashSet<Guid>();
 
     public static InnovationEvent Create(
         string title,
@@ -81,18 +77,18 @@ public class InnovationEvent : Entity, IAggregateRoot
 
     public void AddEvaluationCriteria(EvaluationCriteria criteria)
     {
-        _evaluationCriteria.Add(criteria);
+        EvaluationCriteria.Add(criteria);
     }
 
     public void AssignJudge(Guid judgeUserId)
     {
-        if (!_judgeIds.Contains(judgeUserId))
-            _judgeIds.Add(judgeUserId);
+        if (!JudgeIds.Contains(judgeUserId))
+            JudgeIds.Add(judgeUserId);
     }
 
     internal void AddIdea(Idea idea)
     {
-        _ideas.Add(idea);
+        Ideas.Add(idea);
     }
 
     public void MarkEvaluationInProgress()

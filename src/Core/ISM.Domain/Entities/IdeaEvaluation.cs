@@ -5,8 +5,6 @@ namespace ISM.Domain.Entities;
 
 public class IdeaEvaluation : Entity
 {
-    private readonly List<EvaluationScore> _scores = new();
-
     private IdeaEvaluation() { } // for EF
 
     public Guid IdeaId { get; private set; }
@@ -15,7 +13,7 @@ public class IdeaEvaluation : Entity
     public OverallDecision OverallDecision { get; private set; } = OverallDecision.NotSet;
     public string? Comments { get; private set; }
 
-    public IReadOnlyCollection<EvaluationScore> Scores => _scores.AsReadOnly();
+    public ICollection<EvaluationScore> Scores { get; private set; } = new HashSet<EvaluationScore>();
 
     public static IdeaEvaluation Create(Guid ideaId, Guid judgeId)
     {
@@ -36,6 +34,6 @@ public class IdeaEvaluation : Entity
 
     public void AddScore(EvaluationScore score)
     {
-        _scores.Add(score);
+        Scores.Add(score);
     }
 }

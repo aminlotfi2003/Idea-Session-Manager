@@ -7,8 +7,6 @@ namespace ISM.Domain.Entities;
 
 public class Idea : Entity, IAggregateRoot
 {
-    private readonly List<IdeaEvaluation> _evaluations = new();
-
     private Idea() { } // for EF
 
     public Guid InnovationEventId { get; private set; }
@@ -27,7 +25,7 @@ public class Idea : Entity, IAggregateRoot
 
     public Guid EncryptedParticipantReferenceId { get; private set; }
 
-    public IReadOnlyCollection<IdeaEvaluation> Evaluations => _evaluations.AsReadOnly();
+    public ICollection<IdeaEvaluation> Evaluations { get; private set; } = new HashSet<IdeaEvaluation>();
 
     public static Idea Submit(
         Guid innovationEventId,
@@ -89,6 +87,6 @@ public class Idea : Entity, IAggregateRoot
 
     public void AddEvaluation(IdeaEvaluation evaluation)
     {
-        _evaluations.Add(evaluation);
+        Evaluations.Add(evaluation);
     }
 }
