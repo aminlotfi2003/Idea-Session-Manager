@@ -13,7 +13,7 @@ public class EvaluationCriteriaConfiguration : IEntityTypeConfiguration<Evaluati
         builder.HasKey(c => c.Id);
 
         builder.HasOne(c => c.InnovationEvent)
-            .WithMany(x => x.EvaluationCriteria)
+            .WithMany(x => x.Criteria)
             .HasForeignKey(c => c.InnovationEventId);
 
         builder.Property(c => c.Title)

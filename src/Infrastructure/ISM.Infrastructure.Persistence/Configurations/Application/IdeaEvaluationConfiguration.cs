@@ -21,8 +21,10 @@ public class IdeaEvaluationConfiguration : IEntityTypeConfiguration<IdeaEvaluati
         builder.Property(e => e.EvaluationDate)
             .IsRequired();
 
-        builder.Property(e => e.OverallDecision)
+        builder.Property(e => e.Decision)
             .IsRequired();
+
+        builder.Property(e => e.WeightedScore);
 
         builder.Property(e => e.Comments)
             .HasMaxLength(2000);

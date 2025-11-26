@@ -12,9 +12,12 @@ public class JudgeConfiguration : IEntityTypeConfiguration<Judge>
 
         builder.HasKey(j => j.Id);
 
-        builder.HasOne(j => j.User)
+        builder.Property(j => j.ApplicationUserId)
+            .IsRequired();
+
+        builder.HasOne(j => j.ApplicationUser)
             .WithOne()
-            .HasForeignKey<Judge>(j => j.UserId)
+            .HasForeignKey<Judge>(j => j.ApplicationUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(j => j.FullName)
@@ -26,5 +29,15 @@ public class JudgeConfiguration : IEntityTypeConfiguration<Judge>
 
         builder.Property(j => j.IsActive)
             .IsRequired();
+
+        builder.HasMany(j => j.EventJudges)
+            .WithOne(ej => ej.Judge)
+            .HasForeignKey(ej => ej.JudgeId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasMany(j => j.Evaluations)
+            .WithOne(e => e.Judge)
+            .HasForeignKey(e => e.JudgeId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

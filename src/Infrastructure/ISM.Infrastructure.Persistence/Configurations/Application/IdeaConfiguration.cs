@@ -23,13 +23,13 @@ public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
         builder.Property(i => i.Requirements)
             .HasMaxLength(2000);
 
-        builder.Property(i => i.ProposedImplementationMethod)
+        builder.Property(i => i.ProposedImplementation)
             .HasMaxLength(2000);
 
         builder.Property(i => i.ValueProposition)
             .HasMaxLength(2000);
 
-        builder.Property(i => i.SubmissionDate)
+        builder.Property(i => i.SubmittedAt)
             .IsRequired();
 
         builder.Property(i => i.Status)
@@ -37,15 +37,11 @@ public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
 
         builder.Property(i => i.FinalScore);
 
-        builder.Property(i => i.OverallDecision)
+        builder.Property(i => i.FinalDecision)
             .IsRequired();
 
         builder.Property(i => i.Rank);
 
-        builder.Property(i => i.EncryptedParticipantReferenceId)
-            .IsRequired();
-
-        // ValueObject IdeaCode
         builder.OwnsOne(i => i.IdeaCode, cfg =>
         {
             cfg.Property(x => x.Value)
@@ -57,6 +53,11 @@ public class IdeaConfiguration : IEntityTypeConfiguration<Idea>
         builder.HasMany(i => i.Evaluations)
             .WithOne(e => e.Idea)
             .HasForeignKey(e => e.IdeaId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder.HasOne(i => i.ConfidentialLink)
+            .WithOne(l => l.Idea)
+            .HasForeignKey<IdeaParticipantLink>(l => l.IdeaId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

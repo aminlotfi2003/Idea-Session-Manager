@@ -30,8 +30,8 @@ public class EvaluationCriteria : Entity
         if (maxScore <= minScore)
             throw new ArgumentException("MaxScore must be greater than MinScore.");
 
-        if (weight <= 0)
-            throw new ArgumentException("Weight must be greater than zero.");
+        if (weight <= 0 || weight > 1)
+            throw new ArgumentException("Weight must be greater than zero and less than or equal to one.");
 
         return new EvaluationCriteria
         {

@@ -5,7 +5,7 @@ namespace ISM.Domain.Entities;
 
 public class IdeaEvaluation : Entity
 {
-    private IdeaEvaluation() { } // for EF
+    private IdeaEvaluation() { }
 
     public Guid IdeaId { get; private set; }
     public Idea Idea { get; private set; } = null!;
@@ -14,8 +14,9 @@ public class IdeaEvaluation : Entity
     public Judge Judge { get; private set; } = null!;
 
     public DateTimeOffset EvaluationDate { get; private set; }
-    public OverallDecision OverallDecision { get; private set; } = OverallDecision.NotSet;
+    public OverallDecision Decision { get; private set; } = OverallDecision.NotSet;
     public string? Comments { get; private set; }
+    public double? WeightedScore { get; private set; }
 
     public ICollection<EvaluationScore> Scores { get; private set; } = new HashSet<EvaluationScore>();
 
@@ -29,10 +30,11 @@ public class IdeaEvaluation : Entity
         };
     }
 
-    public void SetDecision(OverallDecision decision, string? comments)
+    public void SetDecision(OverallDecision decision, string? comments, double? weightedScore = null)
     {
-        OverallDecision = decision;
+        Decision = decision;
         Comments = comments;
+        WeightedScore = weightedScore;
         EvaluationDate = DateTimeOffset.UtcNow;
     }
 

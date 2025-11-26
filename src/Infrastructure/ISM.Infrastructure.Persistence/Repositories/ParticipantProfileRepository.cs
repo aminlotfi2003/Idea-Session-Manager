@@ -13,6 +13,6 @@ public class ParticipantProfileRepository : Repository<ParticipantProfile>, IPar
 
     public async Task<ParticipantProfile?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        return await DbSet.FirstOrDefaultAsync(p => p.UserId == userId, cancellationToken);
+        return await DbSet.FirstOrDefaultAsync(p => p.ApplicationUserId == userId, cancellationToken);
     }
 }

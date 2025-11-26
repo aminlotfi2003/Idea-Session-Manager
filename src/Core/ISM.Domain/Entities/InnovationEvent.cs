@@ -4,43 +4,53 @@ using ISM.SharedKernel.Common.Domain;
 
 namespace ISM.Domain.Entities;
 
-public class InnovationEvent : Entity, IAggregateRoot
+public class InnovationEvent : Entity, IAggregateRoot, IAuditableEntity
 {
-    private InnovationEvent() { } // for EF
+    private InnovationEvent() { }
 
     public string Title { get; private set; } = default!;
     public string Description { get; private set; } = default!;
     public string Goals { get; private set; } = default!;
-    public string AllowedParticipantGroups { get; private set; } = default!;
-    public DateTimeOffset StartDateForIdeaSubmission { get; private set; }
-    public DateTimeOffset EndDateForIdeaSubmission { get; private set; }
+    public AllowedParticipantGroup AllowedParticipantGroup { get; private set; }
+    public DateTimeOffset IdeaSubmissionStart { get; private set; }
+    public DateTimeOffset IdeaSubmissionEnd { get; private set; }
     public EventStatus Status { get; private set; } = EventStatus.Draft;
     public string? RulesDocumentPath { get; private set; }
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+    public Guid? CreatedBy { get; set; }
+    public DateTimeOffset? ModifiedAt { get; set; }
+    public Guid? ModifiedBy { get; set; }
+    public bool IsArchived { get; private set; }
 
-    public ICollection<EvaluationCriteria> EvaluationCriteria { get; private set; } = new HashSet<EvaluationCriteria>();
+    public ICollection<EvaluationCriteria> Criteria { get; private set; } = new HashSet<EvaluationCriteria>();
     public ICollection<Idea> Ideas { get; private set; } = new HashSet<Idea>();
-    public ICollection<Guid> JudgeIds { get; private set; } = new HashSet<Guid>();
+    public ICollection<EventJudge> EventJudges { get; private set; } = new HashSet<EventJudge>();
 
     public static InnovationEvent Create(
         string title,
         string description,
         string goals,
-        string allowedParticipantGroups,
-        DateTimeOffset startDate,
-        DateTimeOffset endDate,
+        AllowedParticipantGroup allowedParticipantGroup,
+        DateTimeOffset ideaSubmissionStart,
+        DateTimeOffset ideaSubmissionEnd,
+        Guid createdBy,
         string? rulesDocumentPath = null)
     {
-        if (endDate <= startDate)
-            throw new ArgumentException("End date must be greater than start date.");
+        if (ideaSubmissionEnd <= ideaSubmissionStart)
+        {
+            throw new ArgumentException("Idea submission end must be greater than start.");
+        }
 
         var ev = new InnovationEvent
         {
             Title = title,
             Description = description,
             Goals = goals,
-            AllowedParticipantGroups = allowedParticipantGroups,
-            StartDateForIdeaSubmission = startDate,
-            EndDateForIdeaSubmission = endDate,
+            AllowedParticipantGroup = allowedParticipantGroup,
+            IdeaSubmissionStart = ideaSubmissionStart,
+            IdeaSubmissionEnd = ideaSubmissionEnd,
+            CreatedAt = DateTimeOffset.UtcNow,
+            CreatedBy = createdBy,
             Status = EventStatus.Draft,
             RulesDocumentPath = rulesDocumentPath
         };
@@ -52,63 +62,81 @@ public class InnovationEvent : Entity, IAggregateRoot
 
     public void Publish()
     {
-        if (Status != EventStatus.Draft)
-            throw new InvalidOperationException("Only draft events can be published.");
-
+        EnsureStatus(EventStatus.Draft);
         Status = EventStatus.Published;
+        TouchUpdatedAt();
         AddDomainEvent(new InnovationEventPublishedDomainEvent(Id));
     }
 
     public void OpenIdeaSubmission()
     {
-        if (Status != EventStatus.Published)
-            throw new InvalidOperationException("Event must be published before opening idea submission.");
-
+        EnsureStatus(EventStatus.Published);
         Status = EventStatus.IdeaSubmissionOpen;
+        TouchUpdatedAt();
     }
 
     public void CloseIdeaSubmission()
     {
-        if (Status != EventStatus.IdeaSubmissionOpen)
-            throw new InvalidOperationException("Idea submission is not open.");
-
+        EnsureStatus(EventStatus.IdeaSubmissionOpen);
         Status = EventStatus.IdeaSubmissionClosed;
+        TouchUpdatedAt();
     }
 
     public void AddEvaluationCriteria(EvaluationCriteria criteria)
     {
-        EvaluationCriteria.Add(criteria);
+        Criteria.Add(criteria);
+        TouchUpdatedAt();
     }
 
-    public void AssignJudge(Guid judgeUserId)
+    public void AssignJudge(Judge judge)
     {
-        if (!JudgeIds.Contains(judgeUserId))
-            JudgeIds.Add(judgeUserId);
+        var linkExists = EventJudges.Any(x => x.JudgeId == judge.Id);
+        if (!linkExists)
+        {
+            EventJudges.Add(EventJudge.Create(Id, judge.Id));
+            TouchUpdatedAt();
+        }
     }
 
     internal void AddIdea(Idea idea)
     {
         Ideas.Add(idea);
+        TouchUpdatedAt();
     }
 
     public void MarkEvaluationInProgress()
     {
         Status = EventStatus.EvaluationInProgress;
+        TouchUpdatedAt();
     }
 
     public void MarkEvaluationCompleted()
     {
         Status = EventStatus.EvaluationCompleted;
+        TouchUpdatedAt();
     }
 
     public void PublishResults()
     {
         Status = EventStatus.ResultsPublished;
+        TouchUpdatedAt();
         AddDomainEvent(new InnovationEventResultsFinalizedDomainEvent(Id));
     }
 
     public void Archive()
     {
         Status = EventStatus.Archived;
+        IsArchived = true;
+        TouchUpdatedAt();
     }
+
+    private void EnsureStatus(EventStatus expected)
+    {
+        if (Status != expected)
+        {
+            throw new InvalidOperationException($"Event must be in {expected} status.");
+        }
+    }
+
+    private void TouchUpdatedAt() => ModifiedAt = DateTimeOffset.UtcNow;
 }

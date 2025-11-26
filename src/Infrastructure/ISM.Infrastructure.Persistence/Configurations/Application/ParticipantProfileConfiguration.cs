@@ -20,9 +20,9 @@ public class ParticipantProfileConfiguration : IEntityTypeConfiguration<Particip
             .IsRequired()
             .HasMaxLength(200);
 
-        builder.HasOne(p => p.User)
+        builder.HasOne(p => p.ApplicationUser)
             .WithOne()
-            .HasForeignKey<ParticipantProfile>(p => p.UserId)
+            .HasForeignKey<ParticipantProfile>(p => p.ApplicationUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.OwnsOne(p => p.ContactInfo, cfg =>
@@ -37,5 +37,14 @@ public class ParticipantProfileConfiguration : IEntityTypeConfiguration<Particip
                 .HasMaxLength(50)
                 .IsRequired();
         });
+
+        builder.Property(p => p.RegistrationDate)
+            .IsRequired();
+
+        builder.Property(p => p.CreatedAt)
+            .IsRequired();
+
+        builder.Property(p => p.IsActive)
+            .IsRequired();
     }
 }
