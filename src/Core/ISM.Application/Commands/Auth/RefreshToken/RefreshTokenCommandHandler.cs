@@ -2,6 +2,7 @@
 using ISM.Application.Abstractions.Services;
 using ISM.Application.DTOs.Auth;
 using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -32,14 +33,10 @@ public sealed class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCom
         var tokenHash = _tokenService.ComputeHash(request.RefreshToken);
         var storedToken = await _refreshTokenRepository.GetByTokenHashAsync(tokenHash, cancellationToken);
         if (storedToken is null)
-        {
-            throw new InvalidOperationException("Refresh token not found.");
-        }
+            throw new UnauthorizedException("Refresh token not found.");
 
         if (!storedToken.IsActive(_clock.UtcNow))
-        {
-            throw new InvalidOperationException("Refresh token is no longer valid.");
-        }
+            throw new UnauthorizedException("Refresh token is no longer valid.");
 
         storedToken.Revoke();
 

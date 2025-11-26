@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Evaluations;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Queries.Evaluations.GetAssignedIdeasForJudge;
@@ -18,7 +19,7 @@ internal class GetAssignedIdeasForJudgeQueryHandler : IRequestHandler<GetAssigne
 
     public async Task<IReadOnlyCollection<JudgeAssignedIdeaDto>> Handle(GetAssignedIdeasForJudgeQuery request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         var ideas = eventEntity.Ideas.Where(i => i.Evaluations.Any(ev => ev.JudgeId == request.JudgeId)).ToList();
         return _mapper.Map<IReadOnlyCollection<JudgeAssignedIdeaDto>>(ideas);
     }

@@ -1,5 +1,6 @@
 ﻿using ISM.Application.Abstractions.Repositories;
 using ISM.Domain.Enums;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Events.FinalizeEventEvaluation;
@@ -15,7 +16,7 @@ internal class FinalizeEventEvaluationCommandHandler : IRequestHandler<FinalizeE
 
     public async Task Handle(FinalizeEventEvaluationCommand request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         foreach (var idea in eventEntity.Ideas)
         {
             var weightedScores = idea.Evaluations.Where(e => e.WeightedScore.HasValue).Select(e => e.WeightedScore!.Value).ToList();

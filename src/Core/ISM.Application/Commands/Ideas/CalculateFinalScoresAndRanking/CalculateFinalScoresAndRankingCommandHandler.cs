@@ -1,5 +1,6 @@
 ﻿using ISM.Application.Abstractions.Repositories;
 using ISM.Domain.Enums;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Ideas.CalculateFinalScoresAndRanking;
@@ -15,7 +16,7 @@ internal class CalculateFinalScoresAndRankingCommandHandler : IRequestHandler<Ca
 
     public async Task Handle(CalculateFinalScoresAndRankingCommand request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         var scoredIdeas = eventEntity.Ideas
             .Select(i => new
             {

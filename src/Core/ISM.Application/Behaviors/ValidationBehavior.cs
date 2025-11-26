@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using MediatR;
+using ValidationException = ISM.SharedKernel.Common.Exceptions.ValidationException;
 
 namespace ISM.Application.Behaviors;
 

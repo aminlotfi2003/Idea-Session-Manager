@@ -1,6 +1,7 @@
 ﻿using ISM.Application.Abstractions.Services;
 using ISM.Application.DTOs.Auth;
 using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -26,11 +27,11 @@ public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswor
     {
         var user = await _userManager.FindByIdAsync(request.UserId.ToString());
         if (user is null)
-            throw new InvalidOperationException("User not found.");
+            throw new NotFoundException("User not found.");
 
         var passwordValid = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
         if (!passwordValid)
-            throw new InvalidOperationException("Invalid password.");
+            throw new UnauthorizedException("Invalid password.");
 
         await _passwordPolicyService.EnsurePasswordCompliesAsync(user, request.NewPassword, cancellationToken);
 
@@ -38,7 +39,7 @@ public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswor
         if (!result.Succeeded)
         {
             var errors = string.Join(",", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException(errors);
+            throw new BadRequestException(errors);
         }
 
         user.PasswordLastChangedAt = _clock.UtcNow;

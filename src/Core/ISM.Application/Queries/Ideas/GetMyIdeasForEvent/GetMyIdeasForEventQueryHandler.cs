@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Ideas;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Queries.Ideas.GetMyIdeasForEvent;
@@ -18,7 +19,7 @@ internal class GetMyIdeasForEventQueryHandler : IRequestHandler<GetMyIdeasForEve
 
     public async Task<IReadOnlyCollection<IdeaListItemDto>> Handle(GetMyIdeasForEventQuery request, CancellationToken cancellationToken)
     {
-        var participant = await _uow.ParticipantProfiles.GetByUserIdAsync(request.CurrentUserId, cancellationToken) ?? throw new KeyNotFoundException("Participant profile not found");
+        var participant = await _uow.ParticipantProfiles.GetByUserIdAsync(request.CurrentUserId, cancellationToken) ?? throw new NotFoundException("Participant profile not found");
         var ideas = (await _uow.Ideas.GetByEventIdAsync(request.EventId, cancellationToken))
             .Where(i => i.ConfidentialLink.ParticipantProfileId == participant.Id)
             .ToList();

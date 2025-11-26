@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Ideas;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Queries.Ideas.GetEventResultsForAdmin;
@@ -18,7 +19,7 @@ internal class GetEventResultsForAdminQueryHandler : IRequestHandler<GetEventRes
 
     public async Task<IReadOnlyCollection<IdeaResultDto>> Handle(GetEventResultsForAdminQuery request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         return _mapper.Map<IReadOnlyCollection<IdeaResultDto>>(eventEntity.Ideas);
     }
 }

@@ -20,13 +20,9 @@ internal class GetEventListQueryHandler : IRequestHandler<GetEventListQuery, IRe
     {
         IReadOnlyList<Domain.Entities.InnovationEvent> events;
         if (request.Status.HasValue)
-        {
             events = await _uow.InnovationEvents.GetByStatusAsync(new[] { request.Status.Value }, cancellationToken);
-        }
         else
-        {
             events = await _uow.InnovationEvents.ListAsync(cancellationToken);
-        }
 
         return _mapper.Map<IReadOnlyCollection<InnovationEventListItemDto>>(events);
     }

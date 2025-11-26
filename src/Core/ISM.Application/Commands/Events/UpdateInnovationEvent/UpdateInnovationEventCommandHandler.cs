@@ -2,6 +2,7 @@
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Events;
 using ISM.Domain.Enums;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Events.UpdateInnovationEvent;
@@ -19,11 +20,9 @@ internal class UpdateInnovationEventCommandHandler : IRequestHandler<UpdateInnov
 
     public async Task<InnovationEventDetailDto> Handle(UpdateInnovationEventCommand request, CancellationToken cancellationToken)
     {
-        var existing = await _uow.InnovationEvents.GetByIdAsync(request.Event.Id, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var existing = await _uow.InnovationEvents.GetByIdAsync(request.Event.Id, cancellationToken) ?? throw new NotFoundException("Event not found");
         if (existing.Status != EventStatus.Draft)
-        {
-            throw new InvalidOperationException("Only draft events can be updated");
-        }
+            throw new BusinessRuleViolationException("Only draft events can be updated");
 
         existing = _mapper.Map(request.Event, existing);
         _uow.InnovationEvents.Update(existing);
