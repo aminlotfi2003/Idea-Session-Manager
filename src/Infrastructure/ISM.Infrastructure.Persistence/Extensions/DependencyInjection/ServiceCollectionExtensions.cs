@@ -1,5 +1,7 @@
-﻿using ISM.Infrastructure.Persistence.Configurations;
+﻿using ISM.Application.Abstractions.Repositories;
+using ISM.Infrastructure.Persistence.Configurations;
 using ISM.Infrastructure.Persistence.Contexts;
+using ISM.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +23,16 @@ public static class ServiceCollectionExtensions
                 sql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });
         });
+
+        services.AddScoped<IInnovationEventRepository, InnovationEventRepository>();
+        services.AddScoped<IIdeaRepository, IdeaRepository>();
+        services.AddScoped<IParticipantProfileRepository, ParticipantProfileRepository>();
+        services.AddScoped<IJudgeRepository, JudgeRepository>();
+        services.AddScoped<IEvaluationCriteriaRepository, EvaluationCriteriaRepository>();
+        services.AddScoped<IIdeaEvaluationRepository, IdeaEvaluationRepository>();
+        services.AddScoped<IEvaluationScoreRepository, EvaluationScoreRepository>();
+
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         return services;
     }
