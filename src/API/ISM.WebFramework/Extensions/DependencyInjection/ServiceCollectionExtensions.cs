@@ -1,4 +1,5 @@
-﻿using ISM.Infrastructure.Persistence.DependencyInjection;
+﻿using ISM.Infrastructure.Identity.Extensions.DependencyInjection;
+using ISM.Infrastructure.Persistence.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddPersistence(configuration);
+        services.AddInfrastructureIdentity(configuration);
 
         services.AddControllers();
 

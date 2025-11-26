@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ISM.Infrastructure.Persistence.DependencyInjection;
+namespace ISM.Infrastructure.Persistence.Extensions.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
