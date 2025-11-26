@@ -1,4 +1,5 @@
-﻿using ISM.Domain.Entities;
+﻿using ISM.Application.Abstractions.Persistence;
+using ISM.Domain.Entities;
 using ISM.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<
     ApplicationUserRole,
     ApplicationUserLogin,
     ApplicationRoleClaim,
-    ApplicationUserToken>
+    ApplicationUserToken>, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)

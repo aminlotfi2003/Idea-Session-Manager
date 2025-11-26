@@ -26,12 +26,16 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     Goals = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    AllowedParticipantGroups = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    StartDateForIdeaSubmission = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    EndDateForIdeaSubmission = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    AllowedParticipantGroup = table.Column<int>(type: "int", nullable: false),
+                    IdeaSubmissionStart = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IdeaSubmissionEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     RulesDocumentPath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    JudgeIds = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsArchived = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -70,7 +74,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     ModifiedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     ModifiedBy = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PasswordLastChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    MustChangePasswordOnFirstLogin = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
+                    MustChangePasswordOnNextLogin = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -129,14 +133,13 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(4000)", maxLength: 4000, nullable: false),
                     Requirements = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    ProposedImplementationMethod = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    ProposedImplementation = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
                     ValueProposition = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
-                    SubmissionDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    SubmittedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     FinalScore = table.Column<double>(type: "float", nullable: true),
-                    OverallDecision = table.Column<int>(type: "int", nullable: false),
-                    Rank = table.Column<int>(type: "int", nullable: true),
-                    EncryptedParticipantReferenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FinalDecision = table.Column<int>(type: "int", nullable: false),
+                    Rank = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -179,7 +182,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     ExpertiseAreas = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
@@ -188,8 +191,8 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 {
                     table.PrimaryKey("PK_Judges", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Judges_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Judges_Users_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -202,18 +205,22 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ApplicationUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     FullName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     OrganizationUnitOrCustomerGroup = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    ParticipantType = table.Column<int>(type: "int", nullable: false),
+                    RegistrationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ParticipantProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ParticipantProfiles_Users_UserId",
-                        column: x => x.UserId,
+                        name: "FK_ParticipantProfiles_Users_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
                         principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -389,6 +396,34 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventJudges",
+                schema: "app",
+                columns: table => new
+                {
+                    InnovationEventId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JudgeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventJudges", x => new { x.InnovationEventId, x.JudgeId });
+                    table.ForeignKey(
+                        name: "FK_EventJudges_InnovationEvents_InnovationEventId",
+                        column: x => x.InnovationEventId,
+                        principalSchema: "app",
+                        principalTable: "InnovationEvents",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventJudges_Judges_JudgeId",
+                        column: x => x.JudgeId,
+                        principalSchema: "app",
+                        principalTable: "Judges",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "IdeaEvaluations",
                 schema: "app",
                 columns: table => new
@@ -397,8 +432,9 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     IdeaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JudgeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EvaluationDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    OverallDecision = table.Column<int>(type: "int", nullable: false),
-                    Comments = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true)
+                    Decision = table.Column<int>(type: "int", nullable: false),
+                    Comments = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
+                    WeightedScore = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -416,7 +452,38 @@ namespace ISM.Infrastructure.Persistence.Migrations
                         principalSchema: "app",
                         principalTable: "Judges",
                         principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "IdeaParticipantLinks",
+                schema: "app",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IdeaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ParticipantProfileId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EncryptedParticipantPayload = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    RevealedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IdeaParticipantLinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_IdeaParticipantLinks_Ideas_IdeaId",
+                        column: x => x.IdeaId,
+                        principalSchema: "app",
+                        principalTable: "Ideas",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_IdeaParticipantLinks_ParticipantProfiles_ParticipantProfileId",
+                        column: x => x.ParticipantProfileId,
+                        principalSchema: "app",
+                        principalTable: "ParticipantProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -468,6 +535,12 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 column: "IdeaEvaluationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EventJudges_JudgeId",
+                schema: "app",
+                table: "EventJudges",
+                column: "JudgeId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_IdeaEvaluations_IdeaId",
                 schema: "app",
                 table: "IdeaEvaluations",
@@ -480,24 +553,38 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 column: "JudgeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_IdeaParticipantLinks_IdeaId",
+                schema: "app",
+                table: "IdeaParticipantLinks",
+                column: "IdeaId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_IdeaParticipantLinks_ParticipantProfileId",
+                schema: "app",
+                table: "IdeaParticipantLinks",
+                column: "ParticipantProfileId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Ideas_InnovationEventId",
                 schema: "app",
                 table: "Ideas",
                 column: "InnovationEventId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Judges_UserId",
+                name: "IX_Judges_ApplicationUserId",
                 schema: "app",
                 table: "Judges",
-                column: "UserId",
+                column: "ApplicationUserId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParticipantProfiles_UserId",
+                name: "IX_ParticipantProfiles_ApplicationUserId",
                 schema: "app",
                 table: "ParticipantProfiles",
-                column: "UserId",
-                unique: true);
+                column: "ApplicationUserId",
+                unique: true,
+                filter: "[ApplicationUserId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -586,7 +673,11 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 schema: "app");
 
             migrationBuilder.DropTable(
-                name: "ParticipantProfiles",
+                name: "EventJudges",
+                schema: "app");
+
+            migrationBuilder.DropTable(
+                name: "IdeaParticipantLinks",
                 schema: "app");
 
             migrationBuilder.DropTable(
@@ -627,6 +718,10 @@ namespace ISM.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "IdeaEvaluations",
+                schema: "app");
+
+            migrationBuilder.DropTable(
+                name: "ParticipantProfiles",
                 schema: "app");
 
             migrationBuilder.DropTable(

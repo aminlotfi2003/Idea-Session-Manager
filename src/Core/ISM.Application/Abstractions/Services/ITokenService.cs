@@ -1,10 +1,11 @@
 ﻿using ISM.Domain.Identity;
+using System.Security.Claims;
 
 namespace ISM.Application.Abstractions.Services;
 
 public interface ITokenService
 {
-    TokenPair GenerateTokenPair(ApplicationUser user);
+    TokenPair GenerateTokenPair(ApplicationUser user, IEnumerable<string> roles, IEnumerable<Claim>? additionalClaims = null);
     string ComputeHash(string value);
 }
 

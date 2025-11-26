@@ -14,7 +14,7 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
 
         builder.Property(u => u.PasswordLastChangedAt);
 
-        builder.Property(u => u.MustChangePasswordOnFirstLogin)
+        builder.Property(u => u.MustChangePasswordOnNextLogin)
             .HasDefaultValue(false);
 
         builder.Property(u => u.CreatedAt)

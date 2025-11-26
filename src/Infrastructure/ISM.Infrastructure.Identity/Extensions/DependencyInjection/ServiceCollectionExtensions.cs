@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
             options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             options.Lockout.MaxFailedAccessAttempts = 10;
         })
-        .AddRoles<IdentityRole<Guid>>()
+        .AddRoles<ApplicationRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
@@ -60,6 +60,11 @@ public static class ServiceCollectionExtensions
                     ClockSkew = TimeSpan.Zero
                 };
             });
+
+        services.AddAuthorizationBuilder()
+            .AddPolicy(AuthorizationPolicies.AdminOnly, policy => policy.RequireRole(ApplicationRoles.Admin))
+            .AddPolicy(AuthorizationPolicies.JudgeOnly, policy => policy.RequireRole(ApplicationRoles.Judge))
+            .AddPolicy(AuthorizationPolicies.ParticipantOnly, policy => policy.RequireRole(ApplicationRoles.Participant));
 
         // Register Repositories
         services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();

@@ -20,6 +20,9 @@ public class ParticipantProfileConfiguration : IEntityTypeConfiguration<Particip
             .IsRequired()
             .HasMaxLength(200);
 
+        builder.Property(p => p.ParticipantType)
+            .IsRequired();
+
         builder.HasOne(p => p.ApplicationUser)
             .WithOne()
             .HasForeignKey<ParticipantProfile>(p => p.ApplicationUserId)

@@ -1,4 +1,5 @@
-﻿using ISM.Application.Abstractions.Repositories;
+﻿using ISM.Application.Abstractions.Persistence;
+using ISM.Application.Abstractions.Repositories;
 using ISM.Infrastructure.Persistence.Configurations;
 using ISM.Infrastructure.Persistence.Contexts;
 using ISM.Infrastructure.Persistence.Repositories;
@@ -23,6 +24,8 @@ public static class ServiceCollectionExtensions
                 sql.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
             });
         });
+
+        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<IInnovationEventRepository, InnovationEventRepository>();
         services.AddScoped<IIdeaRepository, IdeaRepository>();

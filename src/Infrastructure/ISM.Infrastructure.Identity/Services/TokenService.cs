@@ -20,7 +20,7 @@ public class TokenService : ITokenService
         _clock = clock;
     }
 
-    public TokenPair GenerateTokenPair(ApplicationUser user)
+    public TokenPair GenerateTokenPair(ApplicationUser user, IEnumerable<string> roles, IEnumerable<Claim>? additionalClaims = null)
     {
         var now = _clock.UtcNow;
         var accessTokenExpiresAt = now.AddMinutes(_options.AccessTokenLifetimeMinutes);
@@ -28,14 +28,18 @@ public class TokenService : ITokenService
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new(JwtRegisteredClaimNames.Email, user.Email ?? string.Empty)
         };
 
-        if (!string.IsNullOrWhiteSpace(user.Email))
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email!));
-
         if (!string.IsNullOrWhiteSpace(user.UserName))
-            claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName!));
+            claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName));
+
+        foreach (var role in roles)
+            claims.Add(new Claim(ClaimTypes.Role, role));
+
+        if (additionalClaims is not null)
+            claims.AddRange(additionalClaims);
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SigningKey));
         var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);

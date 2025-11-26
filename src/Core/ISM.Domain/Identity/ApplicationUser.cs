@@ -13,7 +13,7 @@ public class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     public Guid? ModifiedBy { get; set; }
 
     public DateTimeOffset? PasswordLastChangedAt { get; set; }
-    public bool MustChangePasswordOnFirstLogin { get; set; }
+    public bool MustChangePasswordOnNextLogin { get; set; }
     public bool IsActive { get; set; } = true;
 
     public ICollection<UserLoginHistory> LoginHistories { get; set; } = new HashSet<UserLoginHistory>();

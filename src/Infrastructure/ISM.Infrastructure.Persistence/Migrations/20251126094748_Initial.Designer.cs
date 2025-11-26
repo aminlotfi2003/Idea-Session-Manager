@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISM.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251126075536_Redesign-Domain-Entities")]
-    partial class RedesignDomainEntities
+    [Migration("20251126094748_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -346,6 +346,9 @@ namespace ISM.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("ParticipantType")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset>("RegistrationDate")
                         .HasColumnType("datetimeoffset");
 
@@ -475,7 +478,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("MustChangePasswordOnFirstLogin")
+                    b.Property<bool>("MustChangePasswordOnNextLogin")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);

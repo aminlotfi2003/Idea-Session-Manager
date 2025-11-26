@@ -343,6 +343,9 @@ namespace ISM.Infrastructure.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<int>("ParticipantType")
+                        .HasColumnType("int");
+
                     b.Property<DateTimeOffset>("RegistrationDate")
                         .HasColumnType("datetimeoffset");
 
@@ -472,7 +475,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("MustChangePasswordOnFirstLogin")
+                    b.Property<bool>("MustChangePasswordOnNextLogin")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(false);

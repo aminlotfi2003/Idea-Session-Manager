@@ -15,6 +15,7 @@ app.UseSwaggerConfigured(provider);
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

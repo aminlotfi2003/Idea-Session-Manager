@@ -1,4 +1,5 @@
-﻿using ISM.Domain.Identity;
+﻿using ISM.Domain.Enums;
+using ISM.Domain.Identity;
 using ISM.Domain.ValueObjects;
 using ISM.SharedKernel.Common.Domain;
 
@@ -14,6 +15,7 @@ public class ParticipantProfile : Entity, IAggregateRoot
     public string FullName { get; private set; } = default!;
     public string OrganizationUnitOrCustomerGroup { get; private set; } = default!;
     public ParticipantContactInfo ContactInfo { get; private set; } = default!;
+    public ParticipantType ParticipantType { get; private set; }
     public DateTimeOffset RegistrationDate { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public bool IsActive { get; private set; }
@@ -22,6 +24,7 @@ public class ParticipantProfile : Entity, IAggregateRoot
         string fullName,
         string organizationUnitOrCustomerGroup,
         ParticipantContactInfo contactInfo,
+        ParticipantType participantType,
         DateTimeOffset registrationDate,
         Guid? applicationUserId = null)
     {
@@ -31,6 +34,7 @@ public class ParticipantProfile : Entity, IAggregateRoot
             FullName = fullName,
             OrganizationUnitOrCustomerGroup = organizationUnitOrCustomerGroup,
             ContactInfo = contactInfo,
+            ParticipantType = participantType,
             RegistrationDate = registrationDate,
             CreatedAt = DateTimeOffset.UtcNow,
             IsActive = true
