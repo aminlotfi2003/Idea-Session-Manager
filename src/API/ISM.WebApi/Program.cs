@@ -1,3 +1,5 @@
+using Asp.Versioning.ApiExplorer;
+using ISM.WebFramework.Extensions;
 using ISM.WebFramework.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,17 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddServices(builder.Configuration);
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+app.UseSwaggerConfigured(provider);
 
 app.UseHttpsRedirection();
 

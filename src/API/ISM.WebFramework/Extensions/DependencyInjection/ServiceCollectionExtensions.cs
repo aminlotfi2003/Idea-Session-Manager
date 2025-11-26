@@ -10,6 +10,11 @@ public static class ServiceCollectionExtensions
     {
         services.AddPersistence(configuration);
 
+        services.AddControllers();
+
+        services.AddApiVersioningConfigured();
+        services.AddSwaggerConfigured();
+
         return services;
     }
 }
