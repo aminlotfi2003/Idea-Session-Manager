@@ -8,7 +8,7 @@ public sealed class UserPasswordHistoryConfiguration : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<UserPasswordHistory> builder)
     {
-        builder.ToTable("PasswordHistory", Schemas.Identity);
+        builder.ToTable("UserPasswordHistories", Schemas.Identity);
 
         builder.HasKey(x => x.Id);
         

@@ -8,7 +8,7 @@ public class ParticipantProfileConfiguration : IEntityTypeConfiguration<Particip
 {
     public void Configure(EntityTypeBuilder<ParticipantProfile> builder)
     {
-        builder.ToTable("Participants", Schemas.Application);
+        builder.ToTable("ParticipantProfiles", Schemas.Application);
 
         builder.HasKey(p => p.Id);
 

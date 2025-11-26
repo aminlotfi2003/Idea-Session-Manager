@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ISM.Infrastructure.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -197,7 +197,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Participants",
+                name: "ParticipantProfiles",
                 schema: "app",
                 columns: table => new
                 {
@@ -210,58 +210,14 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Participants", x => x.Id);
+                    table.PrimaryKey("PK_ParticipantProfiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Participants_Users_UserId",
+                        name: "FK_ParticipantProfiles_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PasswordHistory",
-                schema: "identity",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PasswordHistory", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PasswordHistory_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "identity",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "RefreshTokens",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TokenHash = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
-                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    Revoked = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_RefreshTokens_Users_UserId",
-                        column: x => x.UserId,
-                        principalSchema: "identity",
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -288,7 +244,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLoginHistory",
+                name: "UserLoginHistories",
                 schema: "identity",
                 columns: table => new
                 {
@@ -306,9 +262,9 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLoginHistory", x => x.Id);
+                    table.PrimaryKey("PK_UserLoginHistories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserLoginHistory_Users_UserId",
+                        name: "FK_UserLoginHistories_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -331,6 +287,51 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     table.PrimaryKey("PK_UserLogins", x => new { x.LoginProvider, x.ProviderKey });
                     table.ForeignKey(
                         name: "FK_UserLogins_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPasswordHistories",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ChangedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPasswordHistories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserPasswordHistories_Users_UserId",
+                        column: x => x.UserId,
+                        principalSchema: "identity",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserRefreshTokens",
+                schema: "identity",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TokenHash = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Revoked = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserRefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserRefreshTokens_Users_UserId",
                         column: x => x.UserId,
                         principalSchema: "identity",
                         principalTable: "Users",
@@ -492,32 +493,11 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participants_UserId",
+                name: "IX_ParticipantProfiles_UserId",
                 schema: "app",
-                table: "Participants",
+                table: "ParticipantProfiles",
                 column: "UserId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_PasswordHistory_UserId_ChangedAt",
-                schema: "identity",
-                table: "PasswordHistory",
-                columns: new[] { "UserId", "ChangedAt" });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_ExpiresAt",
-                table: "RefreshTokens",
-                column: "ExpiresAt");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_Revoked",
-                table: "RefreshTokens",
-                column: "Revoked");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RefreshTokens_UserId",
-                table: "RefreshTokens",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -540,15 +520,39 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLoginHistory_UserId_OccurredAt",
+                name: "IX_UserLoginHistories_UserId_OccurredAt",
                 schema: "identity",
-                table: "UserLoginHistory",
+                table: "UserLoginHistories",
                 columns: new[] { "UserId", "OccurredAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLogins_UserId",
                 schema: "identity",
                 table: "UserLogins",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPasswordHistories_UserId_ChangedAt",
+                schema: "identity",
+                table: "UserPasswordHistories",
+                columns: new[] { "UserId", "ChangedAt" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRefreshTokens_ExpiresAt",
+                schema: "identity",
+                table: "UserRefreshTokens",
+                column: "ExpiresAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRefreshTokens_Revoked",
+                schema: "identity",
+                table: "UserRefreshTokens",
+                column: "Revoked");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRefreshTokens_UserId",
+                schema: "identity",
+                table: "UserRefreshTokens",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -582,15 +586,8 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 schema: "app");
 
             migrationBuilder.DropTable(
-                name: "Participants",
+                name: "ParticipantProfiles",
                 schema: "app");
-
-            migrationBuilder.DropTable(
-                name: "PasswordHistory",
-                schema: "identity");
-
-            migrationBuilder.DropTable(
-                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
@@ -601,11 +598,19 @@ namespace ISM.Infrastructure.Persistence.Migrations
                 schema: "identity");
 
             migrationBuilder.DropTable(
-                name: "UserLoginHistory",
+                name: "UserLoginHistories",
                 schema: "identity");
 
             migrationBuilder.DropTable(
                 name: "UserLogins",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "UserPasswordHistories",
+                schema: "identity");
+
+            migrationBuilder.DropTable(
+                name: "UserRefreshTokens",
                 schema: "identity");
 
             migrationBuilder.DropTable(

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ISM.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251125153901_Init")]
-    partial class Init
+    [Migration("20251126045904_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -283,7 +283,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Participants", "app");
+                    b.ToTable("ParticipantProfiles", "app");
                 });
 
             modelBuilder.Entity("ISM.Domain.Identity.ApplicationRole", b =>
@@ -577,7 +577,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId", "OccurredAt");
 
-                    b.ToTable("UserLoginHistory", "identity");
+                    b.ToTable("UserLoginHistories", "identity");
                 });
 
             modelBuilder.Entity("ISM.Domain.Identity.UserPasswordHistory", b =>
@@ -600,7 +600,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId", "ChangedAt");
 
-                    b.ToTable("PasswordHistory", "identity");
+                    b.ToTable("UserPasswordHistories", "identity");
                 });
 
             modelBuilder.Entity("ISM.Domain.Identity.UserRefreshToken", b =>
@@ -631,7 +631,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("UserRefreshTokens", "identity");
                 });
 
             modelBuilder.Entity("ISM.Domain.Entities.EvaluationCriteria", b =>
@@ -754,7 +754,7 @@ namespace ISM.Infrastructure.Persistence.Migrations
 
                             b1.HasKey("ParticipantProfileId");
 
-                            b1.ToTable("Participants", "app");
+                            b1.ToTable("ParticipantProfiles", "app");
 
                             b1.WithOwner()
                                 .HasForeignKey("ParticipantProfileId");

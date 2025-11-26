@@ -8,7 +8,7 @@ public sealed class UserRefreshTokenConfiguration : IEntityTypeConfiguration<Use
 {
     public void Configure(EntityTypeBuilder<UserRefreshToken> builder)
     {
-        builder.ToTable("RefreshTokens");
+        builder.ToTable("UserRefreshTokens", Schemas.Identity);
 
         builder.HasKey(x => x.Id);
 

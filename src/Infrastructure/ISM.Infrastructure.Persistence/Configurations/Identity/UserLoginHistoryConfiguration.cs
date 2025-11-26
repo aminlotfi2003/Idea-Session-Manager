@@ -8,7 +8,7 @@ public sealed class UserLoginHistoryConfiguration : IEntityTypeConfiguration<Use
 {
     public void Configure(EntityTypeBuilder<UserLoginHistory> builder)
     {
-        builder.ToTable("UserLoginHistory", Schemas.Identity);
+        builder.ToTable("UserLoginHistories", Schemas.Identity);
 
         builder.HasKey(x => x.Id);
 
