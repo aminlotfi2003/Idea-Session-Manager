@@ -15,6 +15,16 @@ public class IdeaRepository : Repository<Idea>, IIdeaRepository
     {
         return await DbSet
             .Where(i => i.InnovationEventId == innovationEventId)
+            .Include(i => i.ConfidentialLink)
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<Idea?> GetWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await DbSet
+            .Include(i => i.ConfidentialLink)
+            .Include(i => i.Evaluations)
+            .ThenInclude(e => e.Scores)
+            .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 }

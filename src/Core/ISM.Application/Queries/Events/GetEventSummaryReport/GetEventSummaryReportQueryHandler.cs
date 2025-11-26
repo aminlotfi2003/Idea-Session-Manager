@@ -1,0 +1,28 @@
+﻿using ISM.Application.Abstractions.Repositories;
+using ISM.Application.DTOs.Events;
+using MediatR;
+
+namespace ISM.Application.Queries.Events.GetEventSummaryReport;
+
+internal class GetEventSummaryReportQueryHandler : IRequestHandler<GetEventSummaryReportQuery, EventSummaryDto>
+{
+    private readonly IUnitOfWork _uow;
+
+    public GetEventSummaryReportQueryHandler(IUnitOfWork uow)
+    {
+        _uow = uow;
+    }
+
+    public async Task<EventSummaryDto> Handle(GetEventSummaryReportQuery request, CancellationToken cancellationToken)
+    {
+        var entity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        return new EventSummaryDto
+        {
+            EventId = entity.Id,
+            Title = entity.Title,
+            Status = entity.Status,
+            IdeaCount = entity.Ideas.Count,
+            JudgeCount = entity.EventJudges.Count
+        };
+    }
+}
