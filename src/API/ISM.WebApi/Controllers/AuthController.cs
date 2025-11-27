@@ -1,4 +1,5 @@
-﻿using ISM.Application.Commands.Auth.ChangePassword;
+﻿using Asp.Versioning;
+using ISM.Application.Commands.Auth.ChangePassword;
 using ISM.Application.Commands.Auth.CreateJudgeUser;
 using ISM.Application.Commands.Auth.Logout;
 using ISM.Application.Commands.Auth.RefreshToken;
@@ -13,7 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ISM.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/v{version:apiVersion}/evaluations")]
+[ApiVersion("1.0")]
 public class AuthController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;

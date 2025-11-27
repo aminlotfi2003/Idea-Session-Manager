@@ -1,5 +1,6 @@
 ﻿using ISM.Application.Abstractions.Repositories;
 using ISM.Domain.Entities;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Evaluations.SubmitIdeaEvaluation;
@@ -15,7 +16,7 @@ internal class SubmitIdeaEvaluationCommandHandler : IRequestHandler<SubmitIdeaEv
 
     public async Task Handle(SubmitIdeaEvaluationCommand request, CancellationToken cancellationToken)
     {
-        var idea = await _uow.Ideas.GetWithDetailsAsync(request.Evaluation.IdeaId, cancellationToken) ?? throw new KeyNotFoundException("Idea not found");
+        var idea = await _uow.Ideas.GetWithDetailsAsync(request.Evaluation.IdeaId, cancellationToken) ?? throw new NotFoundException("Idea not found");
         var evaluation = idea.Evaluations.FirstOrDefault(e => e.JudgeId == request.JudgeId);
         if (evaluation is null)
         {
@@ -28,11 +29,9 @@ internal class SubmitIdeaEvaluationCommandHandler : IRequestHandler<SubmitIdeaEv
         double weightedScore = 0;
         foreach (var scoreDto in request.Evaluation.Scores)
         {
-            var criteria = await _uow.EvaluationCriteria.GetByIdAsync(scoreDto.CriteriaId, cancellationToken) ?? throw new KeyNotFoundException("Criteria not found");
+            var criteria = await _uow.EvaluationCriteria.GetByIdAsync(scoreDto.CriteriaId, cancellationToken) ?? throw new NotFoundException("Criteria not found");
             if (scoreDto.Score < criteria.MinScore || scoreDto.Score > criteria.MaxScore)
-            {
-                throw new InvalidOperationException("Score is out of range for criteria");
-            }
+                throw new BusinessRuleViolationException("Score is out of range for criteria");
 
             var score = EvaluationScore.Create(evaluation.Id, criteria.Id, scoreDto.Score, scoreDto.Comment);
             evaluation.AddScore(score);

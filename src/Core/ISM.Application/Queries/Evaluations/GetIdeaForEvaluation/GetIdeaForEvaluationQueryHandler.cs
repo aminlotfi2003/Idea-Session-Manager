@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Evaluations;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Queries.Evaluations.GetIdeaForEvaluation;
@@ -18,13 +19,11 @@ internal class GetIdeaForEvaluationQueryHandler : IRequestHandler<GetIdeaForEval
 
     public async Task<IdeaEvaluationDetailDto> Handle(GetIdeaForEvaluationQuery request, CancellationToken cancellationToken)
     {
-        var idea = await _uow.Ideas.GetByIdAsync(request.IdeaId, cancellationToken) ?? throw new KeyNotFoundException("Idea not found");
+        var idea = await _uow.Ideas.GetByIdAsync(request.IdeaId, cancellationToken) ?? throw new NotFoundException("Idea not found");
         if (!idea.Evaluations.Any(e => e.JudgeId == request.JudgeId))
-        {
-            throw new UnauthorizedAccessException();
-        }
+            throw new ForbiddenException();
 
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(idea.InnovationEventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(idea.InnovationEventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         var criteriaDtos = eventEntity.Criteria.Select(c => new IdeaEvaluationCriteriaScoreDto(c.Id, c.Title, c.Weight, c.MinScore, c.MaxScore)).ToList();
 
         return new IdeaEvaluationDetailDto

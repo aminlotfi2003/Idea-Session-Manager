@@ -1,6 +1,7 @@
 ﻿using ISM.Application.Abstractions.Repositories.Identity;
 using ISM.Application.Abstractions.Services;
 using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Exceptions;
 using Microsoft.AspNetCore.Identity;
 
 namespace ISM.Application.Services;
@@ -30,9 +31,7 @@ public sealed class PasswordPolicyService : IPasswordPolicyService
         {
             var result = _passwordHasher.VerifyHashedPassword(user, history.PasswordHash, newPassword);
             if (result is PasswordVerificationResult.Success or PasswordVerificationResult.SuccessRehashNeeded)
-            {
-                throw new InvalidOperationException("New password cannot match any of the last 5 passwords.");
-            }
+                throw new BusinessRuleViolationException("New password cannot match any of the last 5 passwords.");
         }
     }
 

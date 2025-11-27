@@ -3,6 +3,7 @@ using ISM.Application.Abstractions.Repositories.Identity;
 using ISM.Application.Abstractions.Services;
 using ISM.Application.DTOs.Auth;
 using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
@@ -44,11 +45,11 @@ public sealed class LoginQueryHandler : IRequestHandler<LoginQuery, LoginRespons
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user is null)
-            throw new InvalidOperationException("Invalid credentials.");
+            throw new UnauthorizedException("Invalid credentials.");
 
         var signInResult = await _signInManager.CheckPasswordSignInAsync(user, request.Password, true);
         if (!signInResult.Succeeded)
-            throw new InvalidOperationException("Invalid credentials.");
+            throw new UnauthorizedException("Invalid credentials.");
 
         var roles = await _userManager.GetRolesAsync(user);
 

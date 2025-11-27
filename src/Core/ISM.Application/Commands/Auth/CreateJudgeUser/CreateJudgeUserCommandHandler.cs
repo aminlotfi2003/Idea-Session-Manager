@@ -2,6 +2,7 @@
 using ISM.Application.DTOs.Auth;
 using ISM.Domain.Entities;
 using ISM.Domain.Identity;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -36,7 +37,7 @@ public sealed class CreateJudgeUserCommandHandler : IRequestHandler<CreateJudgeU
         if (!createResult.Succeeded)
         {
             var errors = string.Join(",", createResult.Errors.Select(e => e.Description));
-            throw new InvalidOperationException(errors);
+            throw new BadRequestException(errors);
         }
 
         if (!await _roleManager.RoleExistsAsync(ApplicationRoles.Judge))

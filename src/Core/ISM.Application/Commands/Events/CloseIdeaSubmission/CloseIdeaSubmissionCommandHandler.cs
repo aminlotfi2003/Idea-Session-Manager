@@ -1,4 +1,5 @@
 ﻿using ISM.Application.Abstractions.Repositories;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Events.CloseIdeaSubmission;
@@ -14,7 +15,7 @@ internal class CloseIdeaSubmissionCommandHandler : IRequestHandler<CloseIdeaSubm
 
     public async Task Handle(CloseIdeaSubmissionCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _uow.InnovationEvents.GetByIdAsync(request.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var entity = await _uow.InnovationEvents.GetByIdAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         entity.CloseIdeaSubmission();
         await _uow.SaveChangesAsync(cancellationToken);
     }

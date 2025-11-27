@@ -2,6 +2,7 @@
 using ISM.Application.Abstractions.Repositories;
 using ISM.Application.DTOs.Events;
 using ISM.Domain.Entities;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Events.CreateInnovationEvent;
@@ -22,9 +23,7 @@ internal class CreateInnovationEventCommandHandler : IRequestHandler<CreateInnov
         var dto = request.Event;
         var overlap = await _uow.InnovationEvents.AnyOverlappingAsync(dto.IdeaSubmissionStart, dto.IdeaSubmissionEnd, cancellationToken);
         if (overlap)
-        {
-            throw new InvalidOperationException("An event already exists in the specified date range.");
-        }
+            throw new ConflictException("An event already exists in the specified date range.");
 
         var entity = InnovationEvent.Create(
             dto.Title,

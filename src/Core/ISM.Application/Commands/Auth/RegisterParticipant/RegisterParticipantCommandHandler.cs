@@ -4,6 +4,7 @@ using ISM.Application.DTOs.Auth;
 using ISM.Domain.Entities;
 using ISM.Domain.Identity;
 using ISM.Domain.ValueObjects;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -35,9 +36,7 @@ public sealed class RegisterParticipantCommandHandler : IRequestHandler<Register
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);
         if (existingUser is not null)
-        {
-            throw new InvalidOperationException("Email already registered.");
-        }
+            throw new ConflictException("Email already registered.");
 
         var user = new ApplicationUser
         {
@@ -53,13 +52,11 @@ public sealed class RegisterParticipantCommandHandler : IRequestHandler<Register
         if (!createResult.Succeeded)
         {
             var errors = string.Join(",", createResult.Errors.Select(e => e.Description));
-            throw new InvalidOperationException(errors);
+            throw new BadRequestException(errors);
         }
 
         if (!await _roleManager.RoleExistsAsync(ApplicationRoles.Participant))
-        {
             await _roleManager.CreateAsync(new ApplicationRole { Name = ApplicationRoles.Participant });
-        }
 
         await _userManager.AddToRoleAsync(user, ApplicationRoles.Participant);
 
@@ -69,15 +66,14 @@ public sealed class RegisterParticipantCommandHandler : IRequestHandler<Register
             ParticipantContactInfo.Create(request.Email, string.Empty),
             request.ParticipantType,
             _clock.UtcNow,
-            user.Id);
+            user.Id
+        );
 
         await _dbContext.Participants.AddAsync(profile, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         if (user.PasswordHash is not null)
-        {
             await _passwordPolicyService.RecordPasswordChangeAsync(user, user.PasswordHash, cancellationToken);
-        }
 
         return new ParticipantRegistrationResultDto(user.Id, profile.Id, user.Email!, request.FullName, request.ParticipantType.ToString());
     }

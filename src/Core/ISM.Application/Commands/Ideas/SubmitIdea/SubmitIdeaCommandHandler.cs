@@ -4,6 +4,7 @@ using ISM.Application.DTOs.Ideas;
 using ISM.Domain.Entities;
 using ISM.Domain.Enums;
 using ISM.Domain.ValueObjects;
+using ISM.SharedKernel.Common.Exceptions;
 using MediatR;
 
 namespace ISM.Application.Commands.Ideas.SubmitIdea;
@@ -21,16 +22,12 @@ internal class SubmitIdeaCommandHandler : IRequestHandler<SubmitIdeaCommand, Ide
 
     public async Task<IdeaDetailDto> Handle(SubmitIdeaCommand request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetByIdAsync(request.Idea.EventId, cancellationToken) ?? throw new KeyNotFoundException("Event not found");
+        var eventEntity = await _uow.InnovationEvents.GetByIdAsync(request.Idea.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
         if (eventEntity.Status != EventStatus.IdeaSubmissionOpen)
-        {
-            throw new InvalidOperationException("Idea submission is not open for this event.");
-        }
+            throw new BusinessRuleViolationException("Idea submission is not open for this event.");
 
         if (DateTimeOffset.UtcNow > eventEntity.IdeaSubmissionEnd)
-        {
-            throw new InvalidOperationException("Idea submission window has closed.");
-        }
+            throw new BusinessRuleViolationException("Idea submission window has closed.");
 
         var participant = await _uow.ParticipantProfiles.GetByUserIdAsync(request.CurrentUserId, cancellationToken);
         if (participant is null)
@@ -59,7 +56,8 @@ internal class SubmitIdeaCommandHandler : IRequestHandler<SubmitIdeaCommand, Ide
             request.Idea.ProposedImplementation,
             request.Idea.ValueProposition,
             participant.Id,
-            "encrypted");
+            "encrypted"
+        );
 
         await _uow.Ideas.AddAsync(idea, cancellationToken);
         await _uow.SaveChangesAsync(cancellationToken);
