@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Repositories;
+﻿using ISM.Application.Common.Abstractions.Repositories.Application;
 using ISM.Infrastructure.Persistence.Contexts;
 using ISM.SharedKernel.Common.Domain;
 using Microsoft.EntityFrameworkCore;

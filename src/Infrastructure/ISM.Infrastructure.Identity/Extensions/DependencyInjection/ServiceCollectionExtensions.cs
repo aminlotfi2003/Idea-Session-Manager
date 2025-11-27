@@ -1,5 +1,5 @@
-﻿using ISM.Application.Abstractions.Repositories.Identity;
-using ISM.Application.Abstractions.Services;
+﻿using ISM.Application.Common.Abstractions.Repositories.Identity;
+using ISM.Application.Common.Abstractions.Services;
 using ISM.Domain.Identity;
 using ISM.Infrastructure.Identity.Repositories;
 using ISM.Infrastructure.Identity.Services;

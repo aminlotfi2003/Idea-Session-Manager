@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Services;
+﻿using ISM.Application.Common.Abstractions.Services;
 
 namespace ISM.Infrastructure.Identity.Services;
 

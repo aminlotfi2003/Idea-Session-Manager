@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Persistence;
+﻿using ISM.Application.Common.Abstractions.Persistence;
 using ISM.Domain.Entities;
 using ISM.Domain.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;

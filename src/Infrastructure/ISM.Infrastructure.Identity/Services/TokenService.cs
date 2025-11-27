@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Services;
+﻿using ISM.Application.Common.Abstractions.Services;
 using ISM.Domain.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

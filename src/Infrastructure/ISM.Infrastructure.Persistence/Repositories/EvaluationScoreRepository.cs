@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Repositories;
+﻿using ISM.Application.Common.Abstractions.Repositories.Application;
 using ISM.Domain.Entities;
 using ISM.Infrastructure.Persistence.Contexts;
 
