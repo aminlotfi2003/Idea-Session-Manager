@@ -1,5 +1,5 @@
 ﻿using ISM.Domain.Enums;
-using ISM.Domain.Events;
+using ISM.Domain.DomainEvents;
 using ISM.Domain.ValueObjects;
 using ISM.SharedKernel.Common.Domain;
 

@@ -1,8 +1,8 @@
 ﻿using Asp.Versioning;
-using ISM.Application.Commands.Evaluations.SubmitIdeaEvaluation;
-using ISM.Application.DTOs.Evaluations;
-using ISM.Application.Queries.Evaluations.GetAssignedIdeasForJudge;
-using ISM.Application.Queries.Evaluations.GetIdeaForEvaluation;
+using ISM.Application.Features.Evaluations.Commands.SubmitIdeaEvaluation;
+using ISM.Application.Features.Evaluations.Dtos;
+using ISM.Application.Features.Evaluations.Queries.GetAssignedIdeasForJudge;
+using ISM.Application.Features.Evaluations.Queries.GetIdeaForEvaluation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

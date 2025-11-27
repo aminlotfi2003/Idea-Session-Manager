@@ -1,4 +1,4 @@
-﻿using ISM.Application.Abstractions.Repositories.Identity;
+﻿using ISM.Application.Common.Abstractions.Repositories.Identity;
 using ISM.Domain.Identity;
 using ISM.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;

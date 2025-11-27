@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using ISM.Application.Abstractions.Services;
-using ISM.Application.Behaviors;
-using ISM.Application.Services;
+using ISM.Application.Common.Abstractions.Services;
+using ISM.Application.Common.Behaviors;
+using ISM.Application.Common.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;

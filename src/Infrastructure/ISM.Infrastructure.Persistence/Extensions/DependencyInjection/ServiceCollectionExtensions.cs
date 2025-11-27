@@ -1,5 +1,5 @@
-﻿using ISM.Application.Abstractions.Persistence;
-using ISM.Application.Abstractions.Repositories;
+﻿using ISM.Application.Common.Abstractions.Persistence;
+using ISM.Application.Common.Abstractions.Repositories.Application;
 using ISM.Infrastructure.Persistence.Configurations;
 using ISM.Infrastructure.Persistence.Contexts;
 using ISM.Infrastructure.Persistence.Repositories;
