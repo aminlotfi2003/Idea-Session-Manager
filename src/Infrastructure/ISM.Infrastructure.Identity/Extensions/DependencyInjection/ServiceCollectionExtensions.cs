@@ -72,7 +72,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUserLoginHistoryRepository, UserLoginHistoryRepository>();
 
         // Register Services
-        services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddScoped<ITokenService, TokenService>();
 
         return services;

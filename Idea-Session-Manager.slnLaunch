@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "ISM Profile",
+    "Projects": [
+      {
+        "Path": "src\\API\\ISM.WebApi\\ISM.WebApi.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "src\\UI\\ISM.WebApp\\ISM.WebApp.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  }
+]

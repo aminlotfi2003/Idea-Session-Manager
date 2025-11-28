@@ -8,17 +8,24 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+:root {
+    --font-family-fa: "Vazirmatn", "Vazir", Tahoma, sans-serif;
 }
 
 body {
-  margin-bottom: 60px;
+    font-family: var(--font-family-fa);
+    direction: rtl;
+    text-align: right;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #0d6efd;
+}
+
+.navbar-brand, .nav-link {
+    font-weight: 600;
 }
 
 .form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
@@ -27,5 +34,9 @@ body {
 }
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    text-align: start;
+}
+
+.validation-summary-errors ul {
+    margin-bottom: 0;
 }
