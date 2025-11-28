@@ -1,6 +1,6 @@
 ﻿using ISM.Application.Common.Abstractions.Services;
 
-namespace ISM.Infrastructure.Identity.Services;
+namespace ISM.Application.Common.Services;
 
 public class SystemDateTimeProvider : IDateTimeProvider
 {
