@@ -57,7 +57,7 @@ After seeding, sign in as the admin user:
 
 ## API surface (v1)
 Key endpoints (all prefixed with `api/v1/`):
-- **Auth** (`/evaluations` route): register participant, login/logout, refresh token, change password, create judge accounts.
+- **Auth** (`/auth` route): register participant, login/logout, refresh token, change password, create judge accounts.
 - **Events**: manage events and criteria, assign judges, finalize and publish results, retrieve summaries.
 - **Ideas**: submit ideas, assign to judges, calculate scores, list submissions/results for admins or participants.
 - **Evaluations**: judges fetch assigned ideas and submit evaluations.
