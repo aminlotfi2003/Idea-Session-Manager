@@ -17,6 +17,11 @@ public class Repository<T> : IRepository<T> where T : Entity
         DbSet = context.Set<T>();
     }
 
+    public IQueryable<T> Query()
+    {
+        return DbSet.AsNoTracking();
+    }
+
     public async Task AddAsync(T entity, CancellationToken cancellationToken = default)
     {
         await DbSet.AddAsync(entity, cancellationToken);

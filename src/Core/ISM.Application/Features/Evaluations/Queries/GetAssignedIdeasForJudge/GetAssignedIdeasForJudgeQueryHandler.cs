@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using ISM.Application.Common.Abstractions.Persistence;
+using ISM.Application.Extensions;
 using ISM.Application.Features.Evaluations.Dtos;
 using ISM.SharedKernel.Common.Exceptions;
+using ISM.SharedKernel.Common.Pagination;
 using MediatR;
 
 namespace ISM.Application.Features.Evaluations.Queries.GetAssignedIdeasForJudge;
 
-internal class GetAssignedIdeasForJudgeQueryHandler : IRequestHandler<GetAssignedIdeasForJudgeQuery, IReadOnlyCollection<JudgeAssignedIdeaDto>>
+internal class GetAssignedIdeasForJudgeQueryHandler : IRequestHandler<GetAssignedIdeasForJudgeQuery, PaginatedResult<JudgeAssignedIdeaDto>>
 {
     private readonly IUnitOfWork _uow;
     private readonly IMapper _mapper;
@@ -17,10 +20,16 @@ internal class GetAssignedIdeasForJudgeQueryHandler : IRequestHandler<GetAssigne
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyCollection<JudgeAssignedIdeaDto>> Handle(GetAssignedIdeasForJudgeQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<JudgeAssignedIdeaDto>> Handle(GetAssignedIdeasForJudgeQuery request, CancellationToken cancellationToken)
     {
-        var eventEntity = await _uow.InnovationEvents.GetWithDetailsAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
-        var ideas = eventEntity.Ideas.Where(i => i.Evaluations.Any(ev => ev.JudgeId == request.JudgeId)).ToList();
-        return _mapper.Map<IReadOnlyCollection<JudgeAssignedIdeaDto>>(ideas);
+        var pagination = request.Pagination ?? new PaginationParams();
+        _ = await _uow.InnovationEvents.GetByIdAsync(request.EventId, cancellationToken) ?? throw new NotFoundException("Event not found");
+
+        var query = _uow.Ideas.Query()
+            .Where(i => i.InnovationEventId == request.EventId && i.Evaluations.Any(ev => ev.JudgeId == request.JudgeId));
+
+        return await query
+            .ProjectTo<JudgeAssignedIdeaDto>(_mapper.ConfigurationProvider)
+            .ToPaginatedResultAsync(pagination, cancellationToken);
     }
 }

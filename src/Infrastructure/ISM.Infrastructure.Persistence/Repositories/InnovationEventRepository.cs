@@ -24,11 +24,9 @@ public class InnovationEventRepository : Repository<InnovationEvent>, IInnovatio
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<InnovationEvent>> GetByStatusAsync(IEnumerable<EventStatus> statuses, CancellationToken cancellationToken = default)
+    public IQueryable<InnovationEvent> QueryByStatus(IEnumerable<EventStatus> statuses)
     {
-        return await DbSet
-            .Where(e => statuses.Contains(e.Status))
-            .ToListAsync(cancellationToken);
+        return Query().Where(e => statuses.Contains(e.Status));
     }
 
     public Task<bool> AnyOverlappingAsync(DateTimeOffset start, DateTimeOffset end, CancellationToken cancellationToken = default)

@@ -15,6 +15,7 @@ using ISM.Application.Features.Events.Queries.GetEventList;
 using ISM.Application.Features.Events.Queries.GetEventSummaryReport;
 using ISM.Application.Features.Events.Queries.GetOpenEventsForParticipant;
 using ISM.Domain.Enums;
+using ISM.SharedKernel.Common.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -103,17 +104,19 @@ public class EventsController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<IReadOnlyCollection<InnovationEventListItemDto>>> GetList([FromQuery] EventStatus? status)
+    public async Task<ActionResult<PaginatedResult<InnovationEventListItemDto>>> GetList([FromQuery] EventStatus? status, [FromQuery] PaginationParams pagination)
     {
-        var result = await _mediator.Send(new GetEventListQuery(status));
+        pagination ??= new PaginationParams();
+        var result = await _mediator.Send(new GetEventListQuery(status, pagination));
         return Ok(result);
     }
 
     [HttpGet("open")]
     [Authorize(Roles = "Participant")]
-    public async Task<ActionResult<IReadOnlyCollection<InnovationEventListItemDto>>> GetOpen([FromQuery] AllowedParticipantGroup group)
+    public async Task<ActionResult<PaginatedResult<InnovationEventListItemDto>>> GetOpen([FromQuery] AllowedParticipantGroup group, [FromQuery] PaginationParams pagination)
     {
-        var result = await _mediator.Send(new GetOpenEventsForParticipantQuery(group));
+        pagination ??= new PaginationParams();
+        var result = await _mediator.Send(new GetOpenEventsForParticipantQuery(group, pagination));
         return Ok(result);
     }
 

@@ -5,6 +5,8 @@ namespace ISM.Application.Common.Abstractions.Repositories.Application;
 
 public interface IRepository<T> where T : Entity
 {
+    IQueryable<T> Query();
+
     Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<T>> ListAsync(CancellationToken cancellationToken = default);

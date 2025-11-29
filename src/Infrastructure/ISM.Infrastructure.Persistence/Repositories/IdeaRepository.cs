@@ -11,12 +11,11 @@ public class IdeaRepository : Repository<Idea>, IIdeaRepository
     {
     }
 
-    public async Task<List<Idea>> GetByEventIdAsync(Guid innovationEventId, CancellationToken cancellationToken = default)
+    public IQueryable<Idea> QueryByEventId(Guid innovationEventId)
     {
-        return await DbSet
+        return Query()
             .Where(i => i.InnovationEventId == innovationEventId)
-            .Include(i => i.ConfidentialLink)
-            .ToListAsync(cancellationToken);
+            .Include(i => i.ConfidentialLink);
     }
 
     public async Task<Idea?> GetWithDetailsAsync(Guid id, CancellationToken cancellationToken = default)
