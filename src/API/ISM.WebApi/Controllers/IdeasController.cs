@@ -7,6 +7,7 @@ using ISM.Application.Features.Ideas.Queries.GetEventResultsForAdmin;
 using ISM.Application.Features.Ideas.Queries.GetMyIdeaDetails;
 using ISM.Application.Features.Ideas.Queries.GetMyIdeaResult;
 using ISM.Application.Features.Ideas.Queries.GetMyIdeasForEvent;
+using ISM.SharedKernel.Common.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,9 +50,10 @@ public class IdeasController(IMediator mediator) : ControllerBase
 
     [HttpGet("{eventId}/mine")]
     [Authorize(Roles = "Participant")]
-    public async Task<ActionResult<IReadOnlyCollection<IdeaListItemDto>>> MyIdeas(Guid eventId)
+    public async Task<ActionResult<PaginatedResult<IdeaListItemDto>>> MyIdeas(Guid eventId, [FromQuery] PaginationParams pagination)
     {
-        var result = await _mediator.Send(new GetMyIdeasForEventQuery(eventId, GetCurrentUserId()));
+        pagination ??= new PaginationParams();
+        var result = await _mediator.Send(new GetMyIdeasForEventQuery(eventId, GetCurrentUserId(), pagination));
         return Ok(result);
     }
 
@@ -65,9 +67,10 @@ public class IdeasController(IMediator mediator) : ControllerBase
 
     [HttpGet("{eventId}/results")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<IReadOnlyCollection<IdeaResultDto>>> Results(Guid eventId)
+    public async Task<ActionResult<PaginatedResult<IdeaResultDto>>> Results(Guid eventId, [FromQuery] PaginationParams pagination)
     {
-        var result = await _mediator.Send(new GetEventResultsForAdminQuery(eventId));
+        pagination ??= new PaginationParams();
+        var result = await _mediator.Send(new GetEventResultsForAdminQuery(eventId, pagination));
         return Ok(result);
     }
 

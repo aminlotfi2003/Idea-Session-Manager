@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using ISM.Application.Common.Abstractions.Persistence;
+using ISM.Application.Extensions;
 using ISM.Application.Features.Events.Dtos;
 using ISM.Domain.Enums;
+using ISM.SharedKernel.Common.Pagination;
 using MediatR;
 
 namespace ISM.Application.Features.Events.Queries.GetOpenEventsForParticipant;
 
-internal class GetOpenEventsForParticipantQueryHandler : IRequestHandler<GetOpenEventsForParticipantQuery, IReadOnlyCollection<InnovationEventListItemDto>>
+internal class GetOpenEventsForParticipantQueryHandler : IRequestHandler<GetOpenEventsForParticipantQuery, PaginatedResult<InnovationEventListItemDto>>
 {
     private readonly IUnitOfWork _uow;
     private readonly IMapper _mapper;
@@ -17,11 +20,15 @@ internal class GetOpenEventsForParticipantQueryHandler : IRequestHandler<GetOpen
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyCollection<InnovationEventListItemDto>> Handle(GetOpenEventsForParticipantQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<InnovationEventListItemDto>> Handle(GetOpenEventsForParticipantQuery request, CancellationToken cancellationToken)
     {
+        var pagination = request.Pagination ?? new PaginationParams();
         var statuses = new[] { EventStatus.Published, EventStatus.IdeaSubmissionOpen };
-        var events = await _uow.InnovationEvents.GetByStatusAsync(statuses, cancellationToken);
-        events = events.Where(e => e.AllowedParticipantGroup == request.AllowedGroup).ToList();
-        return _mapper.Map<IReadOnlyCollection<InnovationEventListItemDto>>(events);
+        var query = _uow.InnovationEvents.QueryByStatus(statuses)
+            .Where(e => e.AllowedParticipantGroup == request.AllowedGroup);
+
+        return await query
+            .ProjectTo<InnovationEventListItemDto>(_mapper.ConfigurationProvider)
+            .ToPaginatedResultAsync(pagination, cancellationToken);
     }
 }

@@ -3,6 +3,7 @@ using ISM.Application.Features.Evaluations.Commands.SubmitIdeaEvaluation;
 using ISM.Application.Features.Evaluations.Dtos;
 using ISM.Application.Features.Evaluations.Queries.GetAssignedIdeasForJudge;
 using ISM.Application.Features.Evaluations.Queries.GetIdeaForEvaluation;
+using ISM.SharedKernel.Common.Pagination;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,9 +22,10 @@ public class EvaluationsController(IMediator mediator) : ControllerBase
 
     [HttpGet("events/{eventId}/assigned")]
     [Authorize(Roles = "Judge")]
-    public async Task<ActionResult<IReadOnlyCollection<JudgeAssignedIdeaDto>>> Assigned(Guid eventId)
+    public async Task<ActionResult<PaginatedResult<JudgeAssignedIdeaDto>>> Assigned(Guid eventId, [FromQuery] PaginationParams pagination)
     {
-        var result = await _mediator.Send(new GetAssignedIdeasForJudgeQuery(GetCurrentUserId(), eventId));
+        pagination ??= new PaginationParams();
+        var result = await _mediator.Send(new GetAssignedIdeasForJudgeQuery(GetCurrentUserId(), eventId, pagination));
         return Ok(result);
     }
 
