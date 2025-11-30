@@ -14,6 +14,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddUiInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddRazorPages();
+
         services.Configure<ApiClientOptions>(configuration.GetSection(ApiClientOptions.SectionName));
         services.Configure<JwtCookieOptions>(configuration.GetSection(JwtCookieOptions.SectionName));
 

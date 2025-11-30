@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ISM.WebApi.Controllers;
 
 [ApiController]
-[Route("api/v{version:apiVersion}/evaluations")]
+[Route("api/v{version:apiVersion}/auth")]
 [ApiVersion("1.0")]
 public class AuthController(IMediator mediator) : ControllerBase
 {
