@@ -1,5 +1,7 @@
 ﻿using ISM.WebApp.Services.ApiClients.Interfaces;
+using ISM.WebApp.Services.ApiClients.Models.Common;
 using ISM.WebApp.Services.ApiClients.Models.Event;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace ISM.WebApp.Services.ApiClients;
 
@@ -9,33 +11,37 @@ public class EventsApiClient : ApiClientBase, IEventsApiClient
     {
     }
 
-    public async Task<IEnumerable<EventDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<EventListItemDto>?> GetAdminEventsAsync(EventStatus? status, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.GetAsync("api/events", cancellationToken);
-        return await ReadAsAsync<IEnumerable<EventDto>>(response) ?? Enumerable.Empty<EventDto>();
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["pageNumber"] = pageNumber.ToString(),
+            ["pageSize"] = pageSize.ToString(),
+            ["status"] = status.HasValue ? ((int)status.Value).ToString() : null
+        };
+
+        var url = QueryHelpers.AddQueryString("events", queryParams!);
+        var response = await HttpClient.GetAsync(url, cancellationToken);
+        return await ReadAsAsync<PaginatedResult<EventListItemDto>>(response);
     }
 
-    public async Task<EventDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<EventListItemDto>?> GetOpenEventsAsync(AllowedParticipantGroup group, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.GetAsync($"api/events/{id}", cancellationToken);
-        return await ReadAsAsync<EventDto>(response);
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["group"] = ((int)group).ToString(),
+            ["pageNumber"] = pageNumber.ToString(),
+            ["pageSize"] = pageSize.ToString()
+        };
+
+        var url = QueryHelpers.AddQueryString("events/open", queryParams!);
+        var response = await HttpClient.GetAsync(url, cancellationToken);
+        return await ReadAsAsync<PaginatedResult<EventListItemDto>>(response);
     }
 
-    public async Task CreateAsync(EventCreateRequest request, CancellationToken cancellationToken = default)
+    public async Task<EventDetailDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.PostAsJsonAsync("api/events", request, cancellationToken);
-        await EnsureSuccess(response);
-    }
-
-    public async Task UpdateAsync(Guid id, EventUpdateRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await HttpClient.PutAsJsonAsync($"api/events/{id}", request, cancellationToken);
-        await EnsureSuccess(response);
-    }
-
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        var response = await HttpClient.DeleteAsync($"api/events/{id}", cancellationToken);
-        await EnsureSuccess(response);
+        var response = await HttpClient.GetAsync($"events/{id}", cancellationToken);
+        return await ReadAsAsync<EventDetailDto>(response);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using ISM.WebApp.Services.ApiClients.Interfaces;
+using ISM.WebApp.Services.ApiClients.Models.Common;
 using ISM.WebApp.Services.ApiClients.Models.Evaluation;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace ISM.WebApp.Services.ApiClients;
 
@@ -9,15 +11,16 @@ public class EvaluationsApiClient : ApiClientBase, IEvaluationsApiClient
     {
     }
 
-    public async Task<IEnumerable<EvaluationDto>> GetByIdeaAsync(Guid ideaId, CancellationToken cancellationToken = default)
+    public async Task<PaginatedResult<JudgeAssignedIdeaDto>?> GetAssignedIdeasAsync(Guid eventId, int pageNumber, int pageSize, CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.GetAsync($"api/ideas/{ideaId}/evaluations", cancellationToken);
-        return await ReadAsAsync<IEnumerable<EvaluationDto>>(response) ?? Enumerable.Empty<EvaluationDto>();
-    }
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["pageNumber"] = pageNumber.ToString(),
+            ["pageSize"] = pageSize.ToString()
+        };
 
-    public async Task UpdateAsync(Guid id, EvaluationUpdateRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await HttpClient.PutAsJsonAsync($"api/evaluations/{id}", request, cancellationToken);
-        await EnsureSuccess(response);
+        var url = QueryHelpers.AddQueryString($"evaluations/events/{eventId}/assigned", queryParams!);
+        var response = await HttpClient.GetAsync(url, cancellationToken);
+        return await ReadAsAsync<PaginatedResult<JudgeAssignedIdeaDto>>(response);
     }
 }

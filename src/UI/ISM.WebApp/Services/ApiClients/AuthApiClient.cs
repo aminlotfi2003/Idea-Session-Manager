@@ -11,13 +11,13 @@ public class AuthApiClient : ApiClientBase, IAuthApiClient
 
     public async Task<AuthResponse?> LoginAsync(LoginRequest request, CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.PostAsJsonAsync("api/auth/login", request, cancellationToken);
+        var response = await HttpClient.PostAsJsonAsync("auth/login", request, cancellationToken);
         return await ReadAsAsync<AuthResponse>(response);
     }
 
     public async Task LogoutAsync(CancellationToken cancellationToken = default)
     {
-        var response = await HttpClient.PostAsync("api/auth/logout", null, cancellationToken);
+        var response = await HttpClient.PostAsync("auth/logout", null, cancellationToken);
         await EnsureSuccess(response);
     }
 }

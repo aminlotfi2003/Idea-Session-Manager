@@ -1,12 +1,12 @@
-﻿using ISM.WebApp.Services.ApiClients.Models.Idea;
+﻿using ISM.WebApp.Services.ApiClients.Models.Common;
+using ISM.WebApp.Services.ApiClients.Models.Idea;
 
 namespace ISM.WebApp.Services.ApiClients.Interfaces;
 
 public interface IIdeasApiClient
 {
-    Task<IEnumerable<IdeaDto>> GetAllAsync(CancellationToken cancellationToken = default);
-    Task<IdeaDto?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task CreateAsync(IdeaCreateRequest request, CancellationToken cancellationToken = default);
-    Task UpdateAsync(Guid id, IdeaUpdateRequest request, CancellationToken cancellationToken = default);
-    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<PaginatedResult<IdeaListItemDto>?> GetMyIdeasForEventAsync(Guid eventId, int pageNumber, int pageSize, CancellationToken cancellationToken = default);
+    Task<IdeaDetailDto?> GetMyIdeaAsync(Guid ideaId, CancellationToken cancellationToken = default);
+    Task<IdeaResultDto?> GetMyResultAsync(Guid ideaId, CancellationToken cancellationToken = default);
+    Task<IdeaDetailDto?> SubmitAsync(SubmitIdeaRequest request, CancellationToken cancellationToken = default);
 }
